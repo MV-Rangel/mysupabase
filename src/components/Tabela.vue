@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-
+import {deleteUser,deleteReservation} from "../supabase"
 const reservas = ref([]);
 
 const adicionarReserva = (novaReserva) => {
@@ -11,13 +11,20 @@ const adicionarReserva = (novaReserva) => {
   });
 };
 
-const removerReserva = (id) => {
+const removerReserva = async (id) => {
+  
+  
   const index = reservas.value.findIndex(r => r.id === id);
   if (index !== -1) {
+    const reserva = reservas.value[index];
     reservas.value[index].visible = false;
+    
+    await deleteUser(reserva.matricula);
+    await deleteReservation(reserva.matricula);
   }
+  
 };
-
+console.log(reservas.value)
 defineExpose({ adicionarReserva });
 </script>
 

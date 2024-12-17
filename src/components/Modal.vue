@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue";
-import { insertUser, insertReserva } from '../supabase';
+import { insertUser, insertReserva} from '../supabase';
 const formData = reactive({
   nome: "",
   matricula: "",

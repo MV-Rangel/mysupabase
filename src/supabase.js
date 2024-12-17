@@ -65,3 +65,24 @@ export const insertReserva = async (reservaData) => {
     return null;
   }
 };
+
+export const deleteUser= async(userData)=>{
+  
+const { error } = await supabase
+.from('user')
+.delete()
+.eq('registration_number', userData)
+
+
+
+}
+export const deleteReservation= async(userData)=>{
+  
+const { error } = await supabase
+.from('reserva')
+.delete()
+.eq('registration_number', userData)
+
+
+
+}

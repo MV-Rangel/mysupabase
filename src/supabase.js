@@ -13,16 +13,55 @@ const supabaseKey =
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const getUsers = async () => {
-    try {
-      const { data: users, error } = await supabase
-        .from("user")
-        .select("*");
-      
-      if (error) throw error;
-      return users;
-    } catch (error) {
-      console.error("Erro ao buscar usuários:", error.message);
-      return null;
-    }
-  };
-  
+  try {
+    const { data: users, error } = await supabase.from("user").select("*");
+
+    if (error) throw error;
+    return users;
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error.message);
+    return null;
+  }
+};
+
+export const insertUser = async (userData) => {
+  try {
+    const { data, error } = await supabase
+      .from("user")
+      .insert([
+        {
+          user_name: userData.nome,
+          registration_number: userData.matricula,
+        },
+      ])
+      .select(); // Adicionar esta linha
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Erro ao inserir usuário:", error.message);
+    return null;
+  }
+};
+
+// Adicione também uma função para inserir reserva
+export const insertReserva = async (reservaData) => {
+  try {
+    const { data, error } = await supabase
+      .from("reserva")
+      .insert([
+        {
+          room_number: reservaData.sala,
+          reservation_date: reservaData.data,
+          reservation_time: reservaData.horario,
+          registration_number: reservaData.matricula, // Adicionando matrícula para relacionamento
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Erro ao inserir reserva:", error.message);
+    return null;
+  }
+};

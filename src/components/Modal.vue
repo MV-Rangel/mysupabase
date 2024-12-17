@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue";
-
+import { insertUser, insertReserva } from '../supabase';
 const formData = reactive({
   nome: "",
   matricula: "",
@@ -10,32 +10,55 @@ const formData = reactive({
 });
 
 const horarios = [
-  "08:00", "09:00", "10:00", "11:00", "12:00", "13:00",
-  "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+  "19:00",
 ];
 
 const salas = ["1", "2", "3", "4", "5", "6"];
 
 // Define emits para comunicação com componente pai
-const emit = defineEmits(['adicionarReserva']);
+const emit = defineEmits(["adicionarReserva"]);
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+  try {
+    // Primeiro insere o usuário
+    const userData = await insertUser(formData);
+    
+    if (userData) {
+      // Depois insere a reserva com a matrícula do usuário
+      const reservaData = await insertReserva(formData);
+      
+      if (reservaData) {
+        emit('adicionarReserva', {...formData});
+        handleCancel();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
+        modal.hide();
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao salvar dados:', error);
+  }
   
-  // Emite evento com dados do formulário
-  emit('adicionarReserva', {...formData});
+
   
-  // Limpa formulário
-  handleCancel();
+
   
-  // Fecha modal
-  const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
-  modal.hide();
 };
 
 const handleCancel = () => {
-  Object.keys(formData).forEach(key => {
-    formData[key] = '';
+  Object.keys(formData).forEach((key) => {
+    formData[key] = "";
   });
 };
 
@@ -152,7 +175,7 @@ defineExpose({ abrirModal });
             <button
               type="button"
               class="btn btn-outline-warning cancel_button"
-             @click="handleCancel"
+              @click="handleCancel"
             >
               Cancelar
             </button>
